@@ -10,6 +10,7 @@
   "types": "dist/index.d.ts",
   "author": "mktcode",
   "license": "GPL-3.0-only",
+  "repository": "https://github.com/mktcode/openai-tool-runner",
   "dependencies": {
     "openai": "^4.47.2",
     "typescript": "^5.4.5",
