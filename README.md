@@ -105,7 +105,7 @@ export class WebSearchTool implements ToolInterface {
 }
 ```
 
-### Nested "Agents"
+### Nested Agents
 
 ```ts
 import { type AgentMessage, type ToolInterface, createCompleter, createRunner, createSystemMessage } from 'openai-tool-runner'
