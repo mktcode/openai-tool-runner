@@ -14,8 +14,8 @@ So the runner will never return a normal answer but only tool calls instead. I f
 ```bash
 npm install openai-tool-runner
 
-# gpt-4o otherwise, overwrite in createCompleter/Runner
 export OPENAI_TOOL_RUNNER_DEFAULT_MODEL="gpt-3.5-turbo"
+# gpt-4o otherwise, overwrite in createCompleter/Runner
 ```
 
 ## Usage
