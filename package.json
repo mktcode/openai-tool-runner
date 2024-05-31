@@ -1,6 +1,6 @@
 {
   "name": "llm-tool-runner",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Experimental, dynamic-sequential tool runner for OpenAI and compatible APIs.",
   "scripts": {
     "test": "echo \"Everything works as expected. Don't worry!\" && exit 1",
