@@ -1,6 +1,6 @@
 {
   "name": "openai-tool-runner",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Experimental, dynamic-sequential tool runner for OpenAI and compatible APIs.",
   "scripts": {
     "test": "echo \"Everything works as expected. Don't worry!\" && exit 1",
