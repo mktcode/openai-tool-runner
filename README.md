@@ -20,7 +20,7 @@ export OPENAI_TOOL_RUNNER_DEFAULT_MODEL="gpt-3.5-turbo"
 
 ## Usage
 
-### createCompleter ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/openai-tool-runner/utils.ts#L14-L55))
+### createCompleter ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/utils.ts#L15-L56))
 
 ```ts
 import { createCompleter } from 'openai-tool-runner'
@@ -29,7 +29,7 @@ const completer = createCompleter({ apiKey: '...' })
 const response = await completer({ messages, toolChain })
 ```
 
-### createRunner ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/openai-tool-runner/utils.ts#L57-L95))
+### createRunner ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/utils.ts#L58-L96))
 
 ```ts
 import { createRunner } from 'openai-tool-runner'
@@ -41,7 +41,7 @@ for await (const message of runner()) {
 }
 ```
 
-### createSystemMessage ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/openai-tool-runner/utils.ts#L4-L12))
+### createSystemMessage ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/utils.ts#L5-L13))
 
 ```ts
 import { createSystemMessage } from 'openai-tool-runner'
@@ -49,7 +49,7 @@ import { createSystemMessage } from 'openai-tool-runner'
 const systemMessage = createSystemMessage(`You are...`)
 ```
 
-### ToolChain ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/openai-tool-runner/toolchain.ts))
+### ToolChain ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/toolchain.ts))
 
 ```ts
 const provideFinalAnswerTool = new ProvideFinalAnswerTool()
@@ -68,7 +68,7 @@ const toolChain = new ToolChain({
 const response = await completer({ messages, toolChain })
 ```
 
-#### Define a Tool ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/openai-tool-runner/schema.ts#L45-L51))
+#### Define a Tool ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/schema.ts#L45-L51))
 
 ```ts
 import type { ToolInterface } from 'openai-tool-runner'
