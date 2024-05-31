@@ -224,5 +224,3 @@ readToolStream(stream, (message) => {
   chatHistory.push(message)
 }, () => loading = false)
 ```
-
-I will inlcude that in the package as well.
