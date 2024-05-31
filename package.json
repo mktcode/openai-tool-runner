@@ -3,7 +3,8 @@
   "version": "0.0.5",
   "description": "Experimental, dynamic-sequential tool runner for OpenAI and compatible APIs.",
   "scripts": {
-    "test": "echo \"Everything works as expected. Don't worry!\" && exit 1"
+    "test": "echo \"Everything works as expected. Don't worry!\" && exit 1",
+    "build": "tsc"
   },
   "author": "mktcode",
   "license": "GPL-3.0-only",
