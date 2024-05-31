@@ -1,7 +1,7 @@
 import type OpenAI from 'openai'
 import { z } from 'zod'
 
-export const defaultModel = process.env.LLM_TOOL_RUNNER_DEFAULT_MODEL || 'gpt-4o'
+export const defaultModel = process.env.OPENAI_TOOL_RUNNER_DEFAULT_MODEL || 'gpt-4o'
 
 export const openaiSystemMessage = z.object({
   role: z.enum(['system']),

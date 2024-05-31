@@ -1,5 +1,5 @@
 {
-  "name": "llm-tool-runner",
+  "name": "openai-tool-runner",
   "version": "0.0.6",
   "description": "Experimental, dynamic-sequential tool runner for OpenAI and compatible APIs.",
   "scripts": {

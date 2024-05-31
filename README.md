@@ -1,4 +1,4 @@
-# LLM Tool Runner (experimental)
+# OpenAI Tool Runner (experimental)
 
 It's just a wrapper around the OpenAI API but technically you could replace the `baseURL` and try it with Ollama or whatever. I currently prefer the big, commercial models and I hope everyone adapts to OpenAI's API design. It doesn't use it's assistants API though, because that felt a bit too company/product specific. I just needed to run tools in sequence, so they can build on one another, without the assistant asking all the time for confirmation or things it could easily find online and so on. The OpenAI docs only explain the "Input -> Tool(s) -> Response" flow but I want "Input -> Tool(s) -> Tool(s) -> ... -> Response". I'm sharing here just a few lines of code that work for me.
 
@@ -12,27 +12,27 @@ So the runner will never return a normal answer but only tool calls instead. I f
 ## Installation
 
 ```bash
-npm install llm-tool-runner
+npm install openai-tool-runner
 
 # gpt-4o otherwise, overwrite in createCompleter/Runner
-export LLM_TOOL_RUNNER_DEFAULT_MODEL="gpt-3.5-turbo"
+export OPENAI_TOOL_RUNNER_DEFAULT_MODEL="gpt-3.5-turbo"
 ```
 
 ## Usage
 
-### createCompleter ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/llm-tool-runner/utils.ts#L14-L55))
+### createCompleter ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/openai-tool-runner/utils.ts#L14-L55))
 
 ```ts
-import { createCompleter } from 'llm-tool-runner/utils'
+import { createCompleter } from 'openai-tool-runner'
 
 const completer = createCompleter({ apiKey: '...' })
 const response = await completer({ messages, toolChain })
 ```
 
-### createRunner ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/llm-tool-runner/utils.ts#L57-L95))
+### createRunner ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/openai-tool-runner/utils.ts#L57-L95))
 
 ```ts
-import { createRunner } from 'llm-tool-runner/utils'
+import { createRunner } from 'openai-tool-runner'
 
 const runner = createRunner({ systemMessage, chatHistory, toolChain })
 
@@ -41,15 +41,15 @@ for await (const message of runner()) {
 }
 ```
 
-### createSystemMessage ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/llm-tool-runner/utils.ts#L4-L12))
+### createSystemMessage ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/openai-tool-runner/utils.ts#L4-L12))
 
 ```ts
-import { createSystemMessage } from 'llm-tool-runner/utils'
+import { createSystemMessage } from 'openai-tool-runner'
 
 const systemMessage = createSystemMessage(`You are...`)
 ```
 
-### ToolChain ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/llm-tool-runner/toolchain.ts))
+### ToolChain ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/openai-tool-runner/toolchain.ts))
 
 ```ts
 const provideFinalAnswerTool = new ProvideFinalAnswerTool()
@@ -68,12 +68,12 @@ const toolChain = new ToolChain({
 const response = await completer({ messages, toolChain })
 ```
 
-#### Define a Tool ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/llm-tool-runner/schema.ts#L45-L51))
+#### Define a Tool ([Docs](https://github.com/mktcode/website/blob/a22396f1006cb3db1273ab5c6e3dd9b01a82d4f9/server/utils/openai-tool-runner/schema.ts#L45-L51))
 
 ```ts
-import type { Tool } from 'llm-tool-runner/schema'
+import type { ToolInterface } from 'openai-tool-runner'
 
-export class WebSearchTool implements Tool {
+export class WebSearchTool implements ToolInterface {
   name = 'web_search'
   description = 'Use this tool whenever you need to find information online to become more confident in your answers. Especially good for local information and recent events. You can use this tool mutliple times simultaneously, each call with multiple queries.'
   inputSchema = z.object({
@@ -108,11 +108,10 @@ export class WebSearchTool implements Tool {
 ### Nested "Agents"
 
 ```ts
-import type { AgentMessage, Tool } from 'llm-tool-runner/schema'
-import { createCompleter, createRunner, createSystemMessage } from 'llm-tool-runner/utils'
+import { type AgentMessage, type ToolInterface, createCompleter, createRunner, createSystemMessage } from 'openai-tool-runner'
 import { PlanResearchTool, ProvideFinalAnswerTool, WebSearchTool } from './your-tools'
 
-export class ResearchAgentTool implements Tool {
+export class ResearchAgentTool implements ToolInterface {
   name = 'research_agent'
   description = 'Use this tool whenever you need to research something online. Especially useful for...'
   inputSchema = z.object({
