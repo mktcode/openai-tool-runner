@@ -160,3 +160,71 @@ export class ResearchAgentTool implements ToolInterface {
   }
 }
 ```
+
+## Streaming
+
+Nuxt.js uses h3 and it has this handy function [`sendIterable`](https://h3.unjs.io/utils/response#senditerableevent-iterable). You can pass it a generator function, like the runner, and stream messages to your frontend. Here's part of an endpoint in my Nuxt.js application:
+
+```ts
+export default defineEventHandler(async (event) => {
+  const { chatHistory }: { chatHistory: AgentMessage[] } = await readBody(event)
+  const { openaiApiKey, tavilyApiKey } = useRuntimeConfig(event)
+
+  const systemMessage = createSystemMessage(`You are ...
+
+  Today's date: ${new Date().toISOString().slice(0, 16)}
+  Your knowledge cutoff: 2023-10`)
+
+  const reasonAndPlanTool = new ReasonAndPlanTool()
+  const decomposeQuestionTool = new DecomposeQuestionTool()
+  const webSearchTool = new WebSearchTool(tavilyApiKey)
+  const askWebsiteTool = new AskWebsiteTool(openaiApiKey)
+  const askUserTool = new AskUserTool()
+  const provideFinalAnswerTool = new ProvideFinalAnswerTool()
+
+  const toolChain = new ToolChain({
+    tools: [
+      reasonAndPlanTool,
+      decomposeQuestionTool,
+      webSearchTool,
+      askWebsiteTool,
+      askUserTool,
+      provideFinalAnswerTool,
+    ],
+    stopWhen: [
+      provideFinalAnswerTool,
+      askUserTool,
+    ]
+  })
+
+  return sendIterable(event, createRunner({
+    apiKey: openaiApiKey,
+    systemMessage,
+    chatHistory,
+    toolChain
+  }))
+})
+```
+
+You can read the messages using the provided `readToolStream` function:
+
+```ts
+import { readToolStream } from 'openai-tool-runner'
+
+let loading = true
+const chatHistory = []
+
+const stream = await fetch('/api/agent', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatHistory }),
+})
+
+const reader = stream.body.getReader()
+
+readToolStream(reader, (message) => {
+  chatHistory.push(message)
+}, () => loading = false)
+```
+
+I will inlcude that in the package as well.
