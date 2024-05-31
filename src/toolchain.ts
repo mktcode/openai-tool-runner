@@ -1,14 +1,14 @@
 import type OpenAI from 'openai'
 import zodToJsonSchema from 'zod-to-json-schema'
-import type { Tool, ToolChainInterface } from './schema'
+import type { OpenAIAssistantMessage, OpenAIToolMessage, ToolInterface, ToolChainInterface } from './schema'
 
 export class ToolChain implements ToolChainInterface {
-  tools: Tool[]
-  stopWhen: Tool[]
+  tools: ToolInterface[]
+  stopWhen: ToolInterface[]
   toolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[] = []
   toolMessages: OpenAIToolMessage[] = []
 
-  constructor(options: { tools: Tool[], stopWhen?: Tool[] }) {
+  constructor(options: { tools: ToolInterface[], stopWhen?: ToolInterface[] }) {
     const { tools, stopWhen } = options
 
     this.tools = tools
@@ -48,7 +48,7 @@ export class ToolChain implements ToolChainInterface {
     }
   }
 
-  static toOpenAI(tools: Tool[]) {
+  static toOpenAI(tools: ToolInterface[]) {
     type FunctionString = 'function'
     const type: FunctionString = 'function'
 

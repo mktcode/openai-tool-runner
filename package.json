@@ -4,12 +4,16 @@
   "description": "Experimental, dynamic-sequential tool runner for OpenAI and compatible APIs.",
   "scripts": {
     "test": "echo \"Everything works as expected. Don't worry!\" && exit 1",
-    "build": "tsc"
+    "build": "npx tsc"
   },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "mktcode",
   "license": "GPL-3.0-only",
   "dependencies": {
     "openai": "^4.47.2",
-    "zod": "^3.23.8"
+    "typescript": "^5.4.5",
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.23.0"
   }
 }

@@ -42,7 +42,7 @@ export type OpenAIToolMessage = z.infer<typeof openaiToolMessage>
 export const agentMessageSchema = z.union([openaiSystemMessage, openaiUserMessage, openaiAssistantMessage, openaiToolMessage])
 export type AgentMessage = z.infer<typeof agentMessageSchema>
 
-export interface Tool {
+export interface ToolInterface {
   name: string
   description: string
   inputSchema: z.AnyZodObject
@@ -51,8 +51,8 @@ export interface Tool {
 }
 
 export interface ToolChainInterface {
-  tools: Tool[]
-  stopWhen: Tool[]
+  tools: ToolInterface[]
+  stopWhen: ToolInterface[]
   toolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[]
   toolMessages: OpenAIToolMessage[]
 

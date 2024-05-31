@@ -1,5 +1,6 @@
 import OpenAI from 'openai'
-import type { AgentMessage, ToolChainInterface } from './schema'
+import { defaultModel, type AgentMessage, type OpenAISystemMessage, type ToolChainInterface } from './schema'
+import { ToolChain } from './toolchain'
 
 /**
  * Just to make code a bit more readable. I didn't need createUserMessage, etc. yet.
