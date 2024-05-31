@@ -28,3 +28,4 @@ export declare function createRunner(options: {
     chatHistory: AgentMessage[];
     toolChain: ToolChainInterface;
 }): () => AsyncGenerator<AgentMessage>;
+export declare function readToolStream(reader: ReadableStreamDefaultReader<Uint8Array>, handler: (message: AgentMessage) => void, callback?: () => void): Promise<void>;

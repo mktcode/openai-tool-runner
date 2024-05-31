@@ -37,7 +37,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createRunner = exports.createCompleter = exports.createSystemMessage = void 0;
+exports.readToolStream = exports.createRunner = exports.createCompleter = exports.createSystemMessage = void 0;
 const openai_1 = __importDefault(require("openai"));
 const schema_1 = require("./schema");
 const toolchain_1 = require("./toolchain");
@@ -112,4 +112,25 @@ function createRunner(options) {
     };
 }
 exports.createRunner = createRunner;
+function readToolStream(reader, handler, callback) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const decoder = new TextDecoder('utf-8');
+        while (true) {
+            const { done, value } = yield reader.read();
+            if (done) {
+                if (callback) {
+                    callback();
+                }
+                break;
+            }
+            const rawMessagesString = decoder.decode(value);
+            const messagesJsonString = `[${rawMessagesString.replace(/}\s*?{/g, '},{')}]`; // Why no valid json? WHY?!
+            const messages = JSON.parse(messagesJsonString);
+            for (const message of messages) {
+                handler(message);
+            }
+        }
+    });
+}
+exports.readToolStream = readToolStream;
 //# sourceMappingURL=utils.js.map
