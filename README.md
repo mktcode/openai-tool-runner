@@ -218,11 +218,9 @@ const stream = await fetch('/api/agent', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ chatHistory }),
-})
+}).then((res) => res.body.getReader())
 
-const reader = stream.body.getReader()
-
-readToolStream(reader, (message) => {
+readToolStream(stream, (message) => {
   chatHistory.push(message)
 }, () => loading = false)
 ```
