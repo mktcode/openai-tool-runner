@@ -10,7 +10,7 @@ Maybe I will add more functionality but for now it's just this:
 - A "free" runner that runs tools, picked by the LLM, until a certain tool has been used.
 - A "straight" runner that forces the tools to be called in the order provided in the toolchain.
 
-So the runners will never return a normal answer but only tool calls instead. I found that to be handy when recursivley continuing the completion process and I just give it a tool like "provide_final_answer" and display that input as an answer in the frontend. Then it's up to your prompt engineering, to make it generate a useful flows of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full. No error handling and just not a good package yet.
+So the runners will never return a normal answer but only tool calls instead. I found that to be handy when recursively continuing the completion process and I just give it a tool like "provide_final_answer" and display that input as an answer in the frontend. Then it's up to your prompt engineering, to make it generate a useful flows of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full. No error handling and just not a good package yet.
 
 ## Installation
 
