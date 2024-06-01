@@ -15,12 +15,25 @@ export declare function createCompleter(options: {
     model?: string;
     temperature?: number;
     forceTools?: boolean;
+    forceTool?: string;
 }): (messages: AgentMessage[], toolChain?: ToolChainInterface) => Promise<OpenAI.Chat.Completions.ChatCompletionMessage>;
 /**
  * Gives you a function that runs a tool chain,
  * until it runs one of its stop tools.
  */
-export declare function createRunner(options: {
+export declare function createFreeRunner(options: {
+    apiKey: string;
+    baseURL?: string;
+    model?: string;
+    systemMessage: OpenAISystemMessage;
+    chatHistory: AgentMessage[];
+    toolChain: ToolChainInterface;
+}): () => AsyncGenerator<AgentMessage>;
+/**
+ * Gives you a function that runs a tool chain,
+ * in the order provided.
+ */
+export declare function createStraightRunner(options: {
     apiKey: string;
     baseURL?: string;
     model?: string;

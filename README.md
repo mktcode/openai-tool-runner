@@ -4,10 +4,11 @@ It's just a wrapper around the OpenAI API but technically you could replace the 
 
 Maybe I will add more functionality but for now it's just this:
 
-- A completer that runs a completion. You can force it to use tools.
-- A runner that creates a completer with forced tool use, runs it in a loop and stops when certain tools you sepcify are used.
+- A completer that runs a completion. You can force it to use tools (any or specific).
+- A "free" runner that runs tools, picked by the LLM, until a certain tool has been used.
+- A "straight" runner that forces the tools to be called in the order provided in the toolchain.
 
-So the runner will never return a normal answer but only tool calls instead. I found that to be handy when recursivley continuing the completion process and I just give it a tool like "provide_final_answer" and display that input as an answer in the frontend. Then it's up to your prompt engineering in the system instructions, to make it generate a useful flow of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full. No error handling yet.
+So the runners will never return a normal answer but only tool calls instead. I found that to be handy when recursivley continuing the completion process and I just give it a tool like "provide_final_answer" and display that input as an answer in the frontend. Then it's up to your prompt engineering, to make it generate a useful flows of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full. No error handling yet.
 
 ## Installation
 
@@ -29,12 +30,45 @@ const completer = createCompleter({ apiKey: '...' })
 const response = await completer({ messages, toolChain })
 ```
 
-### createRunner ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/utils.ts#L58-L96))
+### createFreeRunner ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/utils.ts#L58-L96))
 
 ```ts
-import { createRunner } from 'openai-tool-runner'
+import { createFreeRunner, ToolChain } from 'openai-tool-runner'
 
-const runner = createRunner({ systemMessage, chatHistory, toolChain })
+const toolChain = new ToolChain({
+  tools: [
+    planResearchTool,
+    webSearchTool,
+    provideFinalAnswerTool,
+    askUserTool,
+  ],
+  stopWhen: [
+    provideFinalAnswerTool,
+    askUserTool,
+  ]
+})
+
+const runner = createFreeRunner({ systemMessage, chatHistory, toolChain })
+
+for await (const message of runner()) {
+  console.info(message)
+}
+```
+
+### createStraightRunner ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/utils.ts#L58-L96))
+
+```ts
+import { createStraightRunner, ToolChain } from 'openai-tool-runner'
+
+const toolChain = new ToolChain({
+  tools: [
+    searchTool,
+    analyzeTool,
+    provideFinalAnswerTool,
+  ],
+})
+
+const runner = createStraightRunner({ systemMessage, chatHistory, toolChain })
 
 for await (const message of runner()) {
   console.info(message)

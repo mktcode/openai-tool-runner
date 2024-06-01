@@ -23,13 +23,15 @@ export function createCompleter(options: {
   model?: string
   temperature?: number
   forceTools?: boolean
+  forceTool?: string
 }) {
   const {
     apiKey,
     baseURL = 'https://api.openai.com/v1',
     model = defaultModel,
     temperature = 0.2,
-    forceTools = false
+    forceTools = false,
+    forceTool,
   } = options
 
   const openai = new OpenAI({ apiKey, baseURL })
@@ -44,7 +46,14 @@ export function createCompleter(options: {
     if (toolChain) {
       completionOptions.tools = ToolChain.toOpenAI(toolChain.tools)
 
-      if (forceTools) {
+      if (forceTool) {
+        completionOptions.tool_choice = {
+          type: 'function',
+          function: {
+            name: forceTool,
+          },
+        }
+      } else if (forceTools) {
         completionOptions.tool_choice = 'required'
       }
     }
@@ -59,7 +68,7 @@ export function createCompleter(options: {
  * Gives you a function that runs a tool chain,
  * until it runs one of its stop tools.
  */
-export function createRunner(options: {
+export function createFreeRunner(options: {
   apiKey: string
   baseURL?: string
   model?: string
@@ -91,6 +100,42 @@ export function createRunner(options: {
 
     if (!toolChain.mustStop()) {
       yield * runner()
+    }
+  }
+}
+
+/**
+ * Gives you a function that runs a tool chain,
+ * in the order provided.
+ */
+export function createStraightRunner(options: {
+  apiKey: string
+  baseURL?: string
+  model?: string
+  systemMessage: OpenAISystemMessage
+  chatHistory: AgentMessage[]
+  toolChain: ToolChainInterface
+}) {
+  const {
+    apiKey,
+    baseURL,
+    model,
+    systemMessage,
+    chatHistory,
+    toolChain
+  } = options
+  return async function* runner(): AsyncGenerator<AgentMessage> {
+    for (const tool of toolChain.tools) {
+      const completer = createCompleter({ apiKey, baseURL, model, forceTool: tool.name })
+      const messageWithToolCalls = await completer([systemMessage, ...chatHistory], toolChain)
+
+      chatHistory.push(messageWithToolCalls)
+      yield messageWithToolCalls
+
+      for await (const toolMessage of toolChain.run(messageWithToolCalls)) {
+        chatHistory.push(toolMessage)
+        yield toolMessage
+      }
     }
   }
 }

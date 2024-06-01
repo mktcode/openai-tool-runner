@@ -37,7 +37,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.readToolStream = exports.createRunner = exports.createCompleter = exports.createSystemMessage = void 0;
+exports.readToolStream = exports.createStraightRunner = exports.createFreeRunner = exports.createCompleter = exports.createSystemMessage = void 0;
 const openai_1 = __importDefault(require("openai"));
 const schema_1 = require("./schema");
 const toolchain_1 = require("./toolchain");
@@ -57,7 +57,7 @@ exports.createSystemMessage = createSystemMessage;
  * Returns the completion message, with tool calls and all.
  */
 function createCompleter(options) {
-    const { apiKey, baseURL = 'https://api.openai.com/v1', model = schema_1.defaultModel, temperature = 0.2, forceTools = false } = options;
+    const { apiKey, baseURL = 'https://api.openai.com/v1', model = schema_1.defaultModel, temperature = 0.2, forceTools = false, forceTool, } = options;
     const openai = new openai_1.default({ apiKey, baseURL });
     return (messages, toolChain) => __awaiter(this, void 0, void 0, function* () {
         const completionOptions = {
@@ -67,7 +67,15 @@ function createCompleter(options) {
         };
         if (toolChain) {
             completionOptions.tools = toolchain_1.ToolChain.toOpenAI(toolChain.tools);
-            if (forceTools) {
+            if (forceTool) {
+                completionOptions.tool_choice = {
+                    type: 'function',
+                    function: {
+                        name: forceTool,
+                    },
+                };
+            }
+            else if (forceTools) {
                 completionOptions.tool_choice = 'required';
             }
         }
@@ -80,7 +88,7 @@ exports.createCompleter = createCompleter;
  * Gives you a function that runs a tool chain,
  * until it runs one of its stop tools.
  */
-function createRunner(options) {
+function createFreeRunner(options) {
     const { apiKey, baseURL, model, systemMessage, chatHistory, toolChain } = options;
     const completer = createCompleter({ apiKey, baseURL, model, forceTools: true });
     return function runner() {
@@ -111,7 +119,42 @@ function createRunner(options) {
         });
     };
 }
-exports.createRunner = createRunner;
+exports.createFreeRunner = createFreeRunner;
+/**
+ * Gives you a function that runs a tool chain,
+ * in the order provided.
+ */
+function createStraightRunner(options) {
+    const { apiKey, baseURL, model, systemMessage, chatHistory, toolChain } = options;
+    return function runner() {
+        return __asyncGenerator(this, arguments, function* runner_2() {
+            var _a, e_2, _b, _c;
+            for (const tool of toolChain.tools) {
+                const completer = createCompleter({ apiKey, baseURL, model, forceTool: tool.name });
+                const messageWithToolCalls = yield __await(completer([systemMessage, ...chatHistory], toolChain));
+                chatHistory.push(messageWithToolCalls);
+                yield yield __await(messageWithToolCalls);
+                try {
+                    for (var _d = true, _e = (e_2 = void 0, __asyncValues(toolChain.run(messageWithToolCalls))), _f; _f = yield __await(_e.next()), _a = _f.done, !_a; _d = true) {
+                        _c = _f.value;
+                        _d = false;
+                        const toolMessage = _c;
+                        chatHistory.push(toolMessage);
+                        yield yield __await(toolMessage);
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (!_d && !_a && (_b = _e.return)) yield __await(_b.call(_e));
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+            }
+        });
+    };
+}
+exports.createStraightRunner = createStraightRunner;
 function readToolStream(reader, handler, callback) {
     return __awaiter(this, void 0, void 0, function* () {
         const decoder = new TextDecoder('utf-8');
