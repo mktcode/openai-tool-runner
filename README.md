@@ -8,7 +8,7 @@ Maybe I will add more functionality but for now it's just this:
 - A "free" runner that runs tools, picked by the LLM, until a certain tool has been used.
 - A "straight" runner that forces the tools to be called in the order provided in the toolchain.
 
-So the runners will never return a normal answer but only tool calls instead. I found that to be handy when recursivley continuing the completion process and I just give it a tool like "provide_final_answer" and display that input as an answer in the frontend. Then it's up to your prompt engineering, to make it generate a useful flows of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full. No error handling yet.
+So the runners will never return a normal answer but only tool calls instead. I found that to be handy when recursivley continuing the completion process and I just give it a tool like "provide_final_answer" and display that input as an answer in the frontend. Then it's up to your prompt engineering, to make it generate a useful flows of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full. No error handling and just not a good package yet.
 
 ## Installation
 
@@ -21,7 +21,7 @@ export OPENAI_TOOL_RUNNER_DEFAULT_MODEL="gpt-3.5-turbo"
 
 ## Usage
 
-### createCompleter ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/utils.ts#L15-L56))
+### createCompleter
 
 ```ts
 import { createCompleter } from 'openai-tool-runner'
@@ -30,7 +30,7 @@ const completer = createCompleter({ apiKey: '...' })
 const response = await completer({ messages, toolChain })
 ```
 
-### createFreeRunner ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/utils.ts#L58-L96))
+### createFreeRunner
 
 ```ts
 import { createFreeRunner, ToolChain } from 'openai-tool-runner'
@@ -55,7 +55,7 @@ for await (const message of runner()) {
 }
 ```
 
-### createStraightRunner ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/utils.ts#L58-L96))
+### createStraightRunner
 
 ```ts
 import { createStraightRunner, ToolChain } from 'openai-tool-runner'
@@ -75,15 +75,18 @@ for await (const message of runner()) {
 }
 ```
 
-### createSystemMessage ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/utils.ts#L5-L13))
+### create...Message
+
+(Doesn't do anything... Just for readability.)
 
 ```ts
-import { createSystemMessage } from 'openai-tool-runner'
+import { createSystemMessage, createUserMessage } from 'openai-tool-runner'
 
 const systemMessage = createSystemMessage(`You are...`)
+const userMessage = createUserMessage(`What is...`)
 ```
 
-### ToolChain ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/toolchain.ts))
+### ToolChain
 
 ```ts
 const provideFinalAnswerTool = new ProvideFinalAnswerTool()
@@ -102,7 +105,7 @@ const toolChain = new ToolChain({
 const response = await completer({ messages, toolChain })
 ```
 
-#### Define a Tool ([Docs](https://github.com/mktcode/openai-tool-runner/blob/90a8607f5dcadaecfa6f97e6e2effafe2f6e3d74/src/schema.ts#L45-L51))
+#### Define a Tool
 
 ```ts
 import type { ToolInterface } from 'openai-tool-runner'
@@ -142,7 +145,7 @@ export class WebSearchTool implements ToolInterface {
 ### Nested Agents
 
 ```ts
-import { type AgentMessage, type ToolInterface, createCompleter, createRunner, createSystemMessage } from 'openai-tool-runner'
+import { type AgentMessage, type ToolInterface, createCompleter, createRunner, createSystemMessage, createUserMessage } from 'openai-tool-runner'
 import { PlanResearchTool, ProvideFinalAnswerTool, WebSearchTool } from './your-tools'
 
 export class ResearchAgentTool implements ToolInterface {
@@ -177,10 +180,7 @@ export class ResearchAgentTool implements ToolInterface {
       ]
     })
 
-    const chatHistory = [...this.chatHistory, {
-      role: 'user',
-      content: args.prompt,
-    }]
+    const chatHistory = [...this.chatHistory, createUserMessage(args.prompt)]
     const runner = createRunner({ systemMessage, chatHistory, toolChain })
     const agentMessages: AgentMessage[] = []
 
@@ -209,29 +209,22 @@ export default defineEventHandler(async (event) => {
   Today's date: ${new Date().toISOString().slice(0, 16)}
   Your knowledge cutoff: 2023-10`)
 
-  const reasonAndPlanTool = new ReasonAndPlanTool()
-  const decomposeQuestionTool = new DecomposeQuestionTool()
   const webSearchTool = new WebSearchTool(tavilyApiKey)
   const askWebsiteTool = new AskWebsiteTool(openaiApiKey)
-  const askUserTool = new AskUserTool()
   const provideFinalAnswerTool = new ProvideFinalAnswerTool()
 
   const toolChain = new ToolChain({
     tools: [
-      reasonAndPlanTool,
-      decomposeQuestionTool,
       webSearchTool,
       askWebsiteTool,
-      askUserTool,
       provideFinalAnswerTool,
     ],
     stopWhen: [
       provideFinalAnswerTool,
-      askUserTool,
     ]
   })
 
-  return sendIterable(event, createRunner({
+  return sendIterable(event, createFreeRunner({
     apiKey: openaiApiKey,
     systemMessage,
     chatHistory,

@@ -2,12 +2,16 @@ import OpenAI from 'openai'
 import { defaultModel, type AgentMessage, type OpenAISystemMessage, type ToolChainInterface } from './schema'
 import { ToolChain } from './toolchain'
 
-/**
- * Just to make code a bit more readable. I didn't need createUserMessage, etc. yet.
- */
 export function createSystemMessage(content: string): OpenAISystemMessage {
   return {
     role: 'system',
+    content,
+  }
+}
+
+export function createUserMessage(content: string): AgentMessage {
+  return {
+    role: 'user',
     content,
   }
 }
