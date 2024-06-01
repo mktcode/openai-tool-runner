@@ -199,7 +199,9 @@ export class ResearchAgentTool implements ToolInterface {
 
 ## Streaming
 
-Nuxt.js uses h3 and it has this handy function [`sendIterable`](https://h3.unjs.io/utils/response#senditerableevent-iterable). You can pass it a generator function, like the runner, and stream messages to your frontend. Here's part of an endpoint in my Nuxt.js application:
+Instead of streaming individual tokens, you can only stream messages. My theory is that token streaming will be irrelevant anyways, once the models are fast enough and it will be more a frontend animation. Streaming the things that actually DO take time, like API calls etc., is more important I guess. The runners are async generators, which means they yield messages (assistant message with tool calls and tool responses) as they come in, instead of just returning a single result.
+
+I currently use Nuxt 3 for my frontend, which uses h3 and it has this handy function [`sendIterable`](https://h3.unjs.io/utils/response#senditerableevent-iterable). You can pass it the runner. Not sure how to do it in Next.js or other frameworks but thre should be similiar solutions. Here's part of an endpoint in my application:
 
 ```ts
 export default defineEventHandler(async (event) => {
