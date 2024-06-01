@@ -8,7 +8,7 @@ It's just a wrapper around the OpenAI API but technically you could replace the 
 - A "free" runner that runs tools, picked by the LLM, until a certain tool has been used.
 - A "straight" runner that forces the tools to be called in the order provided in the toolchain.
 
-So the runners will never return a normal answer but only tool calls instead. I found that to be handy when recursively continuing the completion process and I just give it a tool like "provide_final_answer" and display that input in the frontend. Then it's up to your prompt engineering, to make it generate a useful flows of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full.
+So the runners will never return a normal answer but only tool calls instead. I found that to be handy when recursively continuing the completion process and I just give it a tool like "provide_final_answer" and display that input in the frontend. Then it's up to your prompt engineering, to make it generate useful flows of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full.
 
 I'm testing this mostly with GPT4o btw. Can't say a lot about 3.5 performance or any other closed or open model.
 
