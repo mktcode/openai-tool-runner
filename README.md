@@ -10,6 +10,8 @@ It's just a wrapper around the OpenAI API but technically you could replace the 
 
 So the runners will never return a normal answer but only tool calls instead. I found that to be handy when recursively continuing the completion process and I just give it a tool like "provide_final_answer" and display that input in the frontend. Then it's up to your prompt engineering, to make it generate a useful flows of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full.
 
+I'm testing this mostly with GPT4o btw. Can't say a lot about 3.5 performance or any other closed or open model.
+
 ## Installation
 
 Use this only to try things out. There's no error handling or anything that would make this production ready. It's not much code, so you could also just copy paste it into your project and go on from there.
@@ -108,6 +110,10 @@ const response = await completer({ messages, toolChain })
 ```
 
 #### Define a Tool
+
+I didn't want to use langchain but this is not that much different I guess. Just worse. You can wrap a langchain tool in it though. :D
+
+My initial idea was to make tool responses multi-step as well, using generator functions, different form langchain. Had that working (might come back) but it died a refactoring death. Has to do with frontend as well.
 
 ```ts
 import type { ToolInterface } from 'openai-tool-runner'
