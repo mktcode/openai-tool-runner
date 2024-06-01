@@ -1,5 +1,7 @@
 # OpenAI Tool Runner (experimental)
 
+![openai-tool-runner](https://github.com/mktcode/openai-tool-runner/assets/6792578/8f435499-4c66-45e0-b0c2-562279f0daee)
+
 It's just a wrapper around the OpenAI API but technically you could replace the `baseURL` and try it with Ollama or whatever. I currently prefer the big, commercial models and I hope everyone adapts to OpenAI's API design. It doesn't use it's assistants API though, because that felt a bit too company/product specific. I just needed to run tools in sequence, so they can build on one another, without the assistant asking all the time for confirmation or things it could easily find online and so on. The OpenAI docs only explain the "Input -> Tool(s) -> Response" flow but I want "Input -> Tool(s) -> Tool(s) -> ... -> Response". I'm sharing here just a few lines of code that work for me.
 
 Maybe I will add more functionality but for now it's just this:
