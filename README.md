@@ -2,17 +2,17 @@
 
 ![openai-tool-runner](https://github.com/mktcode/openai-tool-runner/assets/6792578/8f435499-4c66-45e0-b0c2-562279f0daee)
 
-It's just a wrapper around the OpenAI API but technically you could replace the `baseURL` and try it with Ollama or whatever. I currently prefer the big, commercial models and I hope everyone adapts to OpenAI's API design. It doesn't use it's assistants API though, because that felt a bit too company/product specific. I just needed to run tools in sequence, so they can build on one another, without the assistant asking all the time for confirmation or things it could easily find online and so on. The OpenAI docs only explain the "Input -> Tool(s) -> Response" flow but I want "Input -> Tool(s) -> Tool(s) -> ... -> Response". I'm sharing here just a few lines of code that work for me.
+It's just a wrapper around the OpenAI API but technically you could replace the `baseURL` and try it with Ollama and a model that understands the OpenAI tool format. I just needed to run tools in sequence, so they can build on one another, without the assistant generating an answer after one set of tool calls. The OpenAI docs only explain the "Input -> Tool(s) -> Response" flow but I want "Input -> Tool(s) -> Tool(s) -> ... -> Response". I'm sharing here just a few lines of code that work for me.
 
-Maybe I will add more functionality but for now it's just this:
-
-- A completer that runs a completion. You can force it to use tools (any or specific).
+- A completer that runs a completion. You can force it to generate tool calls.
 - A "free" runner that runs tools, picked by the LLM, until a certain tool has been used.
 - A "straight" runner that forces the tools to be called in the order provided in the toolchain.
 
-So the runners will never return a normal answer but only tool calls instead. I found that to be handy when recursivley continuing the completion process and I just give it a tool like "provide_final_answer" and display that input as an answer in the frontend. Then it's up to your prompt engineering, to make it generate a useful flows of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full. No error handling and just not a good package yet.
+So the runners will never return a normal answer but only tool calls instead. I found that to be handy when recursivley continuing the completion process and I just give it a tool like "provide_final_answer" and display that input in the frontend. Then it's up to your prompt engineering, to make it generate a useful flows of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full.
 
 ## Installation
+
+Use this only to try things out. There's no error handling or anything that would make this production ready. It's not much code, so you could also just copy paste it into your project and go on from there.
 
 ```bash
 npm install openai-tool-runner
