@@ -36,7 +36,7 @@ const toolChain = new ToolChain({
 async function main() {
     const runner = createStraightRunner({
         apiKey,
-        systemMessage: createSystemMessage('You are a helpful assistant.'),
+        systemMessage: createSystemMessage('You are a funny assistant.'),
         chatHistory: [],
         toolChain
     })
