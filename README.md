@@ -152,6 +152,8 @@ export class WebSearchTool implements ToolInterface {
 
 ### Nested Agents
 
+A free runner as the main chatbot and then other runners (free and straight) as tools could yield interesting results. Unfortunatley I have no real goal here. Not sure what to even try with this.
+
 ```ts
 import { type AgentMessage, type ToolInterface, createCompleter, createRunner, createSystemMessage, createUserMessage } from 'openai-tool-runner'
 import { PlanResearchTool, ProvideFinalAnswerTool, WebSearchTool } from './your-tools'
