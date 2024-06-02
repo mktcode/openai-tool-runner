@@ -3,7 +3,7 @@
   "version": "0.1.4",
   "description": "Experimental, dynamic-sequential tool runner for OpenAI and compatible APIs.",
   "scripts": {
-    "test": "echo \"Everything works as expected. Don't worry!\" && exit 1",
+    "test": "npx tsx test",
     "build": "npx tsc"
   },
   "main": "dist/index.js",
@@ -12,9 +12,14 @@
   "license": "GPL-3.0-only",
   "repository": "https://github.com/mktcode/openai-tool-runner",
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.18",
+    "ai": "^3.1.22",
     "openai": "^4.47.2",
     "typescript": "^5.4.5",
-    "zod": "^3.23.8",
     "zod-to-json-schema": "^3.23.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.11.0",
+    "zod": "^3.23.8"
   }
 }
