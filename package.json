@@ -12,8 +12,6 @@
   "license": "GPL-3.0-only",
   "repository": "https://github.com/mktcode/openai-tool-runner",
   "dependencies": {
-    "@ai-sdk/openai": "^0.0.18",
-    "ai": "^3.1.22",
     "openai": "^4.47.2",
     "typescript": "^5.4.5",
     "zod-to-json-schema": "^3.23.0"
