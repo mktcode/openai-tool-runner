@@ -1,6 +1,6 @@
 {
   "name": "openai-tool-runner",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Experimental, dynamic-sequential tool runner for OpenAI and compatible APIs.",
   "scripts": {
     "test": "npx tsx test",
