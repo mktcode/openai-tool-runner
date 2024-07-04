@@ -2,24 +2,24 @@
 
 ![openai-tool-runner](https://github.com/mktcode/openai-tool-runner/assets/6792578/8f435499-4c66-45e0-b0c2-562279f0daee)
 
-It's just a wrapper around the OpenAI API but technically you could replace the `baseURL` and try it with Ollama and a model that understands the OpenAI tool format. I just needed to run tools in sequence, so they can build on one another, without the assistant generating an answer after one set of tool calls. The OpenAI docs only explain the "Input -> Tool(s) -> Response" flow but I want "Input -> Tool(s) -> Tool(s) -> ... -> Response". I'm sharing here just a few lines of code that work for me.
+This package is a wrapper around the OpenAI API, allowing you to replace the baseURL to use it with Ollama and compatible models. It enables running tools in sequence without generating a response after each set of tool calls, unlike the standard "Input -> Tool(s) -> Response" flow described in OpenAI documentation. Instead, it supports "Input -> Tool(s) -> Tool(s) -> ... -> Response."
 
-- A completer that runs a completion. You can force it to generate tool calls.
-- A "free" runner that runs tools, picked by the LLM, until a certain tool has been used.
-- A "straight" runner that forces the tools to be called in the order provided in the toolchain.
+- **Completer**: Runs a completion with forced tool calls.
+- **Free Runner**: Executes tools chosen by the LLM until a specific tool is used.
+- **Straight Runner**: Enforces the order of tool calls in the provided toolchain.
 
-So the runners will never return a normal answer but only tool calls instead. I found that to be handy when recursively continuing the completion process and I just give it a tool like "provide_final_answer" and display that input in the frontend. Then it's up to your prompt engineering, to make it generate useful flows of tool calls. Can be infinite too, like "Use your tools to browse social media and constantly comment on stuff.". I didn't try such things yet but theoretically it should only stop when the context window is full.
+These runners return only tool calls, useful for recursively continuing the completion process. For example, you can provide a tool like "provide_final_answer" for display in the frontend. This relies on prompt engineering to generate effective tool call flows. 
 
-I'm testing this mostly with GPT4o btw. Can't say a lot about 3.5 performance or any other closed or open model.
+Primarily tested with GPT-4o.
+
+Use this only for experimentation. There is no error handling or other features to make it production-ready. Since it's a small amount of code, you can easily copy and paste it into your project to build upon.
 
 ## Installation
-
-Use this only to try things out. There's no error handling or anything that would make this production ready. It's not much code, so you could also just copy paste it into your project and go on from there.
 
 ```bash
 npm install openai-tool-runner
 
-export OPENAI_TOOL_RUNNER_DEFAULT_MODEL="gpt-3.5-turbo"
+export OPENAI_TOOL_RUNNER_DEFAULT_MODEL="gpt-4-turbo"
 # gpt-4o otherwise, overwrite in createCompleter/Runner
 ```
 
@@ -81,8 +81,6 @@ for await (const message of runner()) {
 
 ### create...Message
 
-(Doesn't do anything... Just for readability.)
-
 ```ts
 import { createSystemMessage, createUserMessage } from 'openai-tool-runner'
 
@@ -111,9 +109,9 @@ const response = await completer({ messages, toolChain })
 
 #### Define a Tool
 
-I didn't want to use langchain but this is not that much different I guess. Just worse. You can wrap a langchain tool in it though. :D
+I chose not to use LangChain, but this isn't very different—just less sophisticated. You can still wrap a LangChain tool in it.
 
-My initial idea was to make tool responses multi-step as well, using generator functions, different form langchain. Had that working (might come back) but it died a refactoring death. Has to do with frontend as well.
+My initial idea was to make tool responses multi-step using generator functions, unlike LangChain. I had it working initially, but removed it during refactoring. This also involves some frontend considerations.
 
 ```ts
 import type { ToolInterface } from 'openai-tool-runner'
@@ -152,7 +150,7 @@ export class WebSearchTool implements ToolInterface {
 
 ### Nested Agents
 
-A free runner as the main chatbot and then other runners (free and straight) as tools could yield interesting results. Unfortunatley I have no real goal here. Not sure what to even try with this.
+Using a free runner as the main chatbot, with additional free and straight runners as tools, could yield interesting results.
 
 ```ts
 import { type AgentMessage, type ToolInterface, createCompleter, createRunner, createSystemMessage, createUserMessage } from 'openai-tool-runner'
@@ -205,11 +203,11 @@ export class ResearchAgentTool implements ToolInterface {
 }
 ```
 
-## Streaming
+# Streaming
 
-Instead of streaming individual tokens, you can only stream messages. My theory is that token streaming will be irrelevant anyways, once the models are fast enough and it will be more a frontend animation. Streaming the things that actually DO take time, like API calls etc., is more important I guess. The runners are async generators, which means they yield messages (assistant message with tool calls and tool responses) as they come in, instead of just returning a single result.
+Instead of streaming individual tokens, you can stream entire messages. As models become faster, token streaming may become irrelevant and primarily a frontend animation. Streaming actions that take significant time, like API calls, is more important. The runners are async generators, meaning they yield messages (including tool calls and responses) as they arrive, rather than returning a single result.
 
-I currently use Nuxt 3 for my frontend, which uses h3 and it has this handy function [`sendIterable`](https://h3.unjs.io/utils/response#senditerableevent-iterable). You can pass it the runner. Not sure how to do it in Next.js or other frameworks but there should be similiar solutions. Here's part of an endpoint in my application:
+I use Nuxt 3 for my frontend, which utilizes h3 and its handy function [`sendIterable`](https://h3.unjs.io/utils/response#senditerableevent-iterable). You can pass the runner to it. For Next.js or other frameworks, there should be similar solutions. Here's a part of an endpoint in my application:
 
 ```ts
 export default defineEventHandler(async (event) => {
