@@ -56,8 +56,8 @@ export const openaiToolMessage = z.object({
 })
 export type OpenAIToolMessage = z.infer<typeof openaiToolMessage>
 
-export const agentMessageSchema = z.union([openaiSystemMessage, openaiUserMessage, openaiAssistantMessage, openaiToolMessage])
-export type AgentMessage = z.infer<typeof agentMessageSchema>
+export const agentMessage = z.union([openaiSystemMessage, openaiUserMessage, openaiAssistantMessage, openaiToolMessage])
+export type AgentMessage = z.infer<typeof agentMessage>
 
 export interface ToolInterface {
   name: string

@@ -1,9 +1,7 @@
 import OpenAI from 'openai';
 import { type AgentMessage, type OpenAISystemMessage, type ToolChainInterface } from './schema';
-/**
- * Just to make code a bit more readable. I didn't need createUserMessage, etc. yet.
- */
 export declare function createSystemMessage(content: string): OpenAISystemMessage;
+export declare function createUserMessage(content: string): AgentMessage;
 /**
  * Gives you a function that runs a single LLM completion.
  * Has a little flag to force the use of tools.

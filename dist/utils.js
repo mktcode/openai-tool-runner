@@ -37,13 +37,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.readToolStream = exports.createStraightRunner = exports.createFreeRunner = exports.createCompleter = exports.createSystemMessage = void 0;
+exports.readToolStream = exports.createStraightRunner = exports.createFreeRunner = exports.createCompleter = exports.createUserMessage = exports.createSystemMessage = void 0;
 const openai_1 = __importDefault(require("openai"));
 const schema_1 = require("./schema");
 const toolchain_1 = require("./toolchain");
-/**
- * Just to make code a bit more readable. I didn't need createUserMessage, etc. yet.
- */
 function createSystemMessage(content) {
     return {
         role: 'system',
@@ -51,6 +48,13 @@ function createSystemMessage(content) {
     };
 }
 exports.createSystemMessage = createSystemMessage;
+function createUserMessage(content) {
+    return {
+        role: 'user',
+        content,
+    };
+}
+exports.createUserMessage = createUserMessage;
 /**
  * Gives you a function that runs a single LLM completion.
  * Has a little flag to force the use of tools.

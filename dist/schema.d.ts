@@ -15,16 +15,137 @@ export declare const openaiSystemMessage: z.ZodObject<{
     name?: string | undefined;
 }>;
 export type OpenAISystemMessage = z.infer<typeof openaiSystemMessage>;
+export declare const openaiUserMessageContentItemText: z.ZodObject<{
+    type: z.ZodEnum<["text"]>;
+    text: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    type: "text";
+    text: string;
+}, {
+    type: "text";
+    text: string;
+}>;
+export declare const openaiUserMessageContentItemImage: z.ZodObject<{
+    type: z.ZodEnum<["image_url"]>;
+    image_url: z.ZodObject<{
+        url: z.ZodString;
+        detail: z.ZodEnum<["low", "high", "auto"]>;
+    }, "strip", z.ZodTypeAny, {
+        detail: "auto" | "high" | "low";
+        url: string;
+    }, {
+        detail: "auto" | "high" | "low";
+        url: string;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    type: "image_url";
+    image_url: {
+        detail: "auto" | "high" | "low";
+        url: string;
+    };
+}, {
+    type: "image_url";
+    image_url: {
+        detail: "auto" | "high" | "low";
+        url: string;
+    };
+}>;
+export declare const openaiUserMessageContentItem: z.ZodUnion<[z.ZodObject<{
+    type: z.ZodEnum<["text"]>;
+    text: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    type: "text";
+    text: string;
+}, {
+    type: "text";
+    text: string;
+}>, z.ZodObject<{
+    type: z.ZodEnum<["image_url"]>;
+    image_url: z.ZodObject<{
+        url: z.ZodString;
+        detail: z.ZodEnum<["low", "high", "auto"]>;
+    }, "strip", z.ZodTypeAny, {
+        detail: "auto" | "high" | "low";
+        url: string;
+    }, {
+        detail: "auto" | "high" | "low";
+        url: string;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    type: "image_url";
+    image_url: {
+        detail: "auto" | "high" | "low";
+        url: string;
+    };
+}, {
+    type: "image_url";
+    image_url: {
+        detail: "auto" | "high" | "low";
+        url: string;
+    };
+}>]>;
+export type OpenAIUserMessageContentItem = z.infer<typeof openaiUserMessageContentItem>;
 export declare const openaiUserMessage: z.ZodObject<{
     role: z.ZodEnum<["user"]>;
-    content: z.ZodString;
+    content: z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodUnion<[z.ZodObject<{
+        type: z.ZodEnum<["text"]>;
+        text: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        type: "text";
+        text: string;
+    }, {
+        type: "text";
+        text: string;
+    }>, z.ZodObject<{
+        type: z.ZodEnum<["image_url"]>;
+        image_url: z.ZodObject<{
+            url: z.ZodString;
+            detail: z.ZodEnum<["low", "high", "auto"]>;
+        }, "strip", z.ZodTypeAny, {
+            detail: "auto" | "high" | "low";
+            url: string;
+        }, {
+            detail: "auto" | "high" | "low";
+            url: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        type: "image_url";
+        image_url: {
+            detail: "auto" | "high" | "low";
+            url: string;
+        };
+    }, {
+        type: "image_url";
+        image_url: {
+            detail: "auto" | "high" | "low";
+            url: string;
+        };
+    }>]>, "many">]>;
     name: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    content: string;
+    content: string | ({
+        type: "text";
+        text: string;
+    } | {
+        type: "image_url";
+        image_url: {
+            detail: "auto" | "high" | "low";
+            url: string;
+        };
+    })[];
     role: "user";
     name?: string | undefined;
 }, {
-    content: string;
+    content: string | ({
+        type: "text";
+        text: string;
+    } | {
+        type: "image_url";
+        image_url: {
+            detail: "auto" | "high" | "low";
+            url: string;
+        };
+    })[];
     role: "user";
     name?: string | undefined;
 }>;
@@ -101,7 +222,7 @@ export declare const openaiToolMessage: z.ZodObject<{
     tool_call_id: string;
 }>;
 export type OpenAIToolMessage = z.infer<typeof openaiToolMessage>;
-export declare const agentMessageSchema: z.ZodUnion<[z.ZodObject<{
+export declare const agentMessage: z.ZodUnion<[z.ZodObject<{
     role: z.ZodEnum<["system"]>;
     content: z.ZodString;
     name: z.ZodOptional<z.ZodString>;
@@ -115,14 +236,65 @@ export declare const agentMessageSchema: z.ZodUnion<[z.ZodObject<{
     name?: string | undefined;
 }>, z.ZodObject<{
     role: z.ZodEnum<["user"]>;
-    content: z.ZodString;
+    content: z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodUnion<[z.ZodObject<{
+        type: z.ZodEnum<["text"]>;
+        text: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        type: "text";
+        text: string;
+    }, {
+        type: "text";
+        text: string;
+    }>, z.ZodObject<{
+        type: z.ZodEnum<["image_url"]>;
+        image_url: z.ZodObject<{
+            url: z.ZodString;
+            detail: z.ZodEnum<["low", "high", "auto"]>;
+        }, "strip", z.ZodTypeAny, {
+            detail: "auto" | "high" | "low";
+            url: string;
+        }, {
+            detail: "auto" | "high" | "low";
+            url: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        type: "image_url";
+        image_url: {
+            detail: "auto" | "high" | "low";
+            url: string;
+        };
+    }, {
+        type: "image_url";
+        image_url: {
+            detail: "auto" | "high" | "low";
+            url: string;
+        };
+    }>]>, "many">]>;
     name: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    content: string;
+    content: string | ({
+        type: "text";
+        text: string;
+    } | {
+        type: "image_url";
+        image_url: {
+            detail: "auto" | "high" | "low";
+            url: string;
+        };
+    })[];
     role: "user";
     name?: string | undefined;
 }, {
-    content: string;
+    content: string | ({
+        type: "text";
+        text: string;
+    } | {
+        type: "image_url";
+        image_url: {
+            detail: "auto" | "high" | "low";
+            url: string;
+        };
+    })[];
     role: "user";
     name?: string | undefined;
 }>, z.ZodObject<{
@@ -194,7 +366,7 @@ export declare const agentMessageSchema: z.ZodUnion<[z.ZodObject<{
     role: "tool";
     tool_call_id: string;
 }>]>;
-export type AgentMessage = z.infer<typeof agentMessageSchema>;
+export type AgentMessage = z.infer<typeof agentMessage>;
 export interface ToolInterface {
     name: string;
     description: string;
