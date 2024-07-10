@@ -10,9 +10,26 @@ export const openaiSystemMessage = z.object({
 })
 export type OpenAISystemMessage = z.infer<typeof openaiSystemMessage>
 
+export const openaiUserMessageContentItemText = z.object({
+  type: z.enum(['text']),
+  text: z.string(),
+})
+
+export const openaiUserMessageContentItemImage = z.object({
+  type: z.enum(['image_url']),
+  image_url: z.object({
+    url: z.string(),
+    detail: z.enum(['low', 'high', 'auto']),
+  }),
+})
+
+export const openaiUserMessageContentItem = z.union([openaiUserMessageContentItemText, openaiUserMessageContentItemImage])
+
+export type OpenAIUserMessageContentItem = z.infer<typeof openaiUserMessageContentItem>
+
 export const openaiUserMessage = z.object({
   role: z.enum(['user']),
-  content: z.string(),
+  content: z.string().or(z.array(openaiUserMessageContentItem)),
   name: z.string().optional(),
 })
 export type OpenAIUserMessage = z.infer<typeof openaiUserMessage>
