@@ -1,8 +1,6 @@
 ![logo](/assets/logo.png)
 
-![animation](/assets/animation.gif)
-
-# OpenAI Tool Runner (experimental)
+# OpenLLM Tool Runner (experimental)
 
 This package is a wrapper around the OpenAI API, allowing you to replace the baseURL to use it with Ollama and compatible models. It enables running tools in sequence without generating a response after each set of tool calls, unlike the standard "Input -> Tool(s) -> Response" flow described in OpenAI documentation. Instead, it supports "Input -> Tool(s) -> Tool(s) -> ... -> Response."
 
@@ -15,6 +13,8 @@ These runners return only tool calls, useful for recursively continuing the comp
 Primarily tested with GPT-4o.
 
 Use this only for experimentation. There is no error handling or other features to make it production-ready. Since it's a small amount of code, you can easily copy and paste it into your project to build upon.
+
+![animation](/assets/animation.gif)
 
 ## Installation
 
