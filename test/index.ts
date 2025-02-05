@@ -36,6 +36,11 @@ const toolChain = new ToolChain({
 
 async function main() {
     try {
+        console.assert(toolChain.tools.length === 1, 'Expected one tool in the tool chain.')
+        console.assert(toolChain.stopWhen.length === 0, 'Expected no stop tools in the tool chain.')
+        console.assert(toolChain.toolCalls.length === 0, 'Expected no tool calls in the tool chain before running.')
+        console.assert(toolChain.toolMessages.length === 0, 'Expected no tool messages in the tool chain before running.')
+
         const runner = createStraightRunner({
             apiKey,
             systemMessage: createSystemMessage('You are a funny assistant.'),
@@ -44,11 +49,14 @@ async function main() {
             temperature: 0.5
         })
     
-        for await (const message of runner()) {
-            console.log('Receving message...')
+        for await (const _ of runner()) {
+            console.info('Receving message...')
         }
-    
-        console.log('Done!')
+
+        console.assert(toolChain.toolCalls.length === 1, 'Expected one tool call in the tool chain after running.')
+        console.assert(toolChain.toolMessages.length === 1, 'Expected one tool message in the tool chain after running.')
+
+        console.info('Done!')
     } catch (error) {
         console.error('An error occurred:', error)
     }
