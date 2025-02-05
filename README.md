@@ -1,6 +1,8 @@
-# OpenAI Tool Runner (experimental)
+![logo](/assets/logo.png)
 
-![openai-tool-runner](https://github.com/mktcode/openai-tool-runner/assets/6792578/8f435499-4c66-45e0-b0c2-562279f0daee)
+![animation](/assets/animation.gif)
+
+# OpenAI Tool Runner (experimental)
 
 This package is a wrapper around the OpenAI API, allowing you to replace the baseURL to use it with Ollama and compatible models. It enables running tools in sequence without generating a response after each set of tool calls, unlike the standard "Input -> Tool(s) -> Response" flow described in OpenAI documentation. Instead, it supports "Input -> Tool(s) -> Tool(s) -> ... -> Response."
 
@@ -16,7 +18,7 @@ Use this only for experimentation. There is no error handling or other features 
 
 ## Installation
 
-```bash
+```sh
 npm install openai-tool-runner
 
 export OPENAI_TOOL_RUNNER_DEFAULT_MODEL="gpt-4-turbo"
@@ -260,4 +262,20 @@ const stream = await fetch('/api/agent', {
 readToolStream(stream, (message) => {
   chatHistory.push(message)
 }, () => loading = false)
+```
+
+# Development
+
+```sh
+git clone https://github.com/mktcode/openai-tool-runner
+npm i
+```
+
+## Testing
+
+This is just a script I used to test the tool runner. It's not a real test suite. Coming soon. Maybe.
+
+```sh
+export OPENAI_API_KEY="..."
+npm run test
 ```
