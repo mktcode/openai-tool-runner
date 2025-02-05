@@ -268,6 +268,7 @@ readToolStream(stream, (message) => {
 
 ```sh
 git clone https://github.com/mktcode/openai-tool-runner
+cd openai-tool-runner
 npm i
 ```
 
