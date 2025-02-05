@@ -76,6 +76,7 @@ export function createFreeRunner(options: {
   apiKey: string
   baseURL?: string
   model?: string
+  temperature?: number
   systemMessage: OpenAISystemMessage
   chatHistory: AgentMessage[]
   toolChain: ToolChainInterface
@@ -84,12 +85,13 @@ export function createFreeRunner(options: {
     apiKey,
     baseURL,
     model,
+    temperature,
     systemMessage,
     chatHistory,
     toolChain
   } = options
 
-  const completer = createCompleter({ apiKey, baseURL, model, forceTools: true })
+  const completer = createCompleter({ apiKey, baseURL, model, temperature, forceTools: true })
 
   return async function* runner(): AsyncGenerator<AgentMessage> {
     const messageWithToolCalls = await completer([systemMessage, ...chatHistory], toolChain)
@@ -116,6 +118,7 @@ export function createStraightRunner(options: {
   apiKey: string
   baseURL?: string
   model?: string
+  temperature?: number
   systemMessage: OpenAISystemMessage
   chatHistory: AgentMessage[]
   toolChain: ToolChainInterface
@@ -124,13 +127,14 @@ export function createStraightRunner(options: {
     apiKey,
     baseURL,
     model,
+    temperature,
     systemMessage,
     chatHistory,
     toolChain
   } = options
   return async function* runner(): AsyncGenerator<AgentMessage> {
     for (const tool of toolChain.tools) {
-      const completer = createCompleter({ apiKey, baseURL, model, forceTool: tool.name })
+      const completer = createCompleter({ apiKey, baseURL, model, temperature, forceTool: tool.name })
       const messageWithToolCalls = await completer([systemMessage, ...chatHistory], toolChain)
 
       chatHistory.push(messageWithToolCalls)

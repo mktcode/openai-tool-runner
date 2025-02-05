@@ -14,13 +14,14 @@ class JokeTool implements ToolInterface {
         topic: z.string()
     })
     outputSchema = z.object({
+        topic: z.string(),
         setup: z.string(),
         punchline: z.string()
     })
 
     async run(args: z.infer<typeof this.inputSchema>): Promise<z.infer<typeof this.outputSchema>> {
-        console.info('Running joke tool with args:', args)
         return {
+            topic: args.topic,
             setup: 'Why did the chicken cross the road?',
             punchline: 'To get to the other side!'
         }
@@ -34,15 +35,22 @@ const toolChain = new ToolChain({
 });
 
 async function main() {
-    const runner = createStraightRunner({
-        apiKey,
-        systemMessage: createSystemMessage('You are a funny assistant.'),
-        chatHistory: [],
-        toolChain
-    })
-
-    for await (const message of runner()) {
-        console.log('Message:', message)
+    try {
+        const runner = createStraightRunner({
+            apiKey,
+            systemMessage: createSystemMessage('You are a funny assistant.'),
+            chatHistory: [],
+            toolChain,
+            temperature: 0.5
+        })
+    
+        for await (const message of runner()) {
+            console.log('Receving message...')
+        }
+    
+        console.log('Done!')
+    } catch (error) {
+        console.error('An error occurred:', error)
     }
 }
 
